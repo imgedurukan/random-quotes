@@ -18,9 +18,22 @@ export function QuotesContextProvider({ children }) {
   function handleLikeQuote() {
     const updatedQuotes = quotes.map((quote, id) => {
       if (id === quoteIndex) {
-        const updatedLikedBy =
-          typeof quote.likedBy === 'number' ? quote.likedBy + 1 : 1;
-        return { ...quote, likedBy: updatedLikedBy };
+        const currentLikes =
+          typeof quote.likedBy === 'number' ? quote.likedBy : 0;
+
+        if (quote.isLiked) {
+          return {
+            ...quote,
+            likedBy: currentLikes > 0 ? currentLikes - 1 : 0,
+            isLiked: false,
+          };
+        } else {
+          return {
+            ...quote,
+            likedBy: currentLikes + 1,
+            isLiked: true,
+          };
+        }
       }
       return quote;
     });
@@ -31,11 +44,13 @@ export function QuotesContextProvider({ children }) {
   function handleUnlikeQuote(indexToUnlike) {
     const updatedQuotes = quotes.map((quote, id) => {
       if (id === indexToUnlike) {
-        // Eğer sayı 0'dan büyükse 1 azalt, değilse 0'da tut
         const currentLikes =
           typeof quote.likedBy === 'number' ? quote.likedBy : 0;
-        const updatedLikedBy = currentLikes > 0 ? currentLikes - 1 : 0;
-        return { ...quote, likedBy: updatedLikedBy };
+        return {
+          ...quote,
+          likedBy: currentLikes > 0 ? currentLikes - 1 : 0,
+          isLiked: false,
+        };
       }
       return quote;
     });

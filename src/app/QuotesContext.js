@@ -4,7 +4,7 @@ import { createContext, useState } from 'react';
 import { quotes as initialQuotes } from '@/quotes';
 import { getRandomNumber } from '@/utils/helper-functions';
 
-export const QuotesContext = createContext({});
+export const QuotesContext = createContext([]);
 
 export function QuotesContextProvider({ children }) {
   const [quoteIndex, setQuoteIndex] = useState(0);

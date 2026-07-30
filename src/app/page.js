@@ -8,14 +8,19 @@ import { QuotesContext } from '@/app/QuotesContext';
 export default function Home() {
   const { quotes, quoteIndex, handleQuoteIndexUpdate, handleLikeQuote } =
     useContext(QuotesContext);
-  const { quote, author, likedBy } = quotes[quoteIndex];
+
+  // 1. Buraya isLiked bilgisini ekledik
+  const { quote, author, likedBy, isLiked } = quotes[quoteIndex];
 
   return (
     <main className='min-h-screen flex items-center justify-center bg-slate-200'>
       <section className='bg-slate-50/50 rounded-md p-10 flex flex-col'>
         <div className='self-end'>
           <Button variant={'icon'} onClick={handleLikeQuote}>
-            ❤️ {likedBy ?? 0}
+            {isLiked ? '❤️' : '🤍'}
+            <span className='font-bold text-slate-900 ml-1'>
+              {likedBy ?? 0}
+            </span>
           </Button>
         </div>
         <H3 element='p'>{quote}</H3>

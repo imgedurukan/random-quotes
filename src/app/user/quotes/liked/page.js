@@ -48,7 +48,7 @@ export default function LikedQuotesPage() {
                     variant={'secondary'}
                     onClick={() => handleUnlikeQuote(item.originalIndex)}
                   >
-                    Unlike (-1)
+                    Unlike
                   </Button>
                 </div>
               </div>

@@ -12,8 +12,8 @@ export default function Home() {
   const { quote, author, likedBy, isLiked } = quotes[quoteIndex];
 
   return (
-    <main className='min-h-screen flex items-center justify-center bg-slate-200 dark:bg-slate-950 transition-colors duration-300'>
-      <section className='bg-slate-50/80 dark:bg-slate-900 rounded-md p-10 flex flex-col border border-slate-200 dark:border-slate-800 shadow-md transition-colors duration-300'>
+    <main className='min-h-screen flex items-center justify-center bg-slate-200 dark:bg-slate-950 transition-colors duration-300 px-4'>
+      <section className='bg-slate-50/80 dark:bg-slate-900 rounded-md p-6 sm:p-10 flex flex-col border border-slate-200 dark:border-slate-800 shadow-md transition-colors duration-300'>
         <div className='self-end'>
           <Button variant={'icon'} onClick={handleLikeQuote}>
             {isLiked ? '❤️' : '🤍'}
@@ -22,7 +22,7 @@ export default function Home() {
             </span>
           </Button>
         </div>
-        <H3 element='p' className='text-slate-900 dark:text-slate-200'>
+        <H3 element='p' className='text-slate-900'>
           {quote}
         </H3>
         <span className='text-md font-semibold text-slate-700 dark:text-slate-300 self-end mt-2'>

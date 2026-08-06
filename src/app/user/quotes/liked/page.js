@@ -13,17 +13,17 @@ export default function LikedQuotesPage() {
     .filter((quote) => quote.likedBy > 0);
 
   return (
-    <main className='min-h-screen flex flex-col items-center justify-start bg-slate-200 p-8'>
-      <div className='w-full max-w-2xl bg-white rounded-md p-6 shadow-md mt-10'>
+    <main className='min-h-screen flex flex-col items-center justify-start bg-slate-200 dark:bg-slate-950 transition-colors duration-300 p-8'>
+      <div className='w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md p-6 shadow-md mt-10'>
         <H3
           element='h1'
-          className='text-2xl font-bold mb-6 text-slate-800 border-b pb-2'
+          className='text-2xl font-bold mb-6 text-slate-800 border-b dark:border-slate-800 pb-2'
         >
           ❤️ Liked Quotes
         </H3>
 
         {likedQuotes.length === 0 ? (
-          <p className='text-slate-500 text-center py-4'>
+          <p className='text-slate-500 dark:text-slate-400 text-center py-4'>
             You haven't liked any quotes yet.
           </p>
         ) : (
@@ -31,13 +31,15 @@ export default function LikedQuotesPage() {
             {likedQuotes.map((item) => (
               <div
                 key={item.originalIndex}
-                className='p-4 bg-slate-50 rounded border border-slate-200 flex justify-between items-center gap-4'
+                className='p-4 bg-slate-50 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 flex justify-between items-center gap-4'
               >
                 <div>
-                  <p className='text-slate-800 italic'>"{item.quote}"</p>
-                  <span className='text-sm text-slate-500 block mt-1'>
+                  <p className='text-slate-800 dark:text-slate-200 italic'>
+                    "{item.quote}"
+                  </p>
+                  <span className='text-sm text-slate-500 dark:text-slate-400 block mt-1'>
                     - {item.author}{' '}
-                    <span className='text-red-500 font-semibold'>
+                    <span className='text-red-500 dark:text-red-400 font-semibold'>
                       (Likes: {item.likedBy})
                     </span>
                   </span>
@@ -48,7 +50,7 @@ export default function LikedQuotesPage() {
                     variant={'secondary'}
                     onClick={() => handleUnlikeQuote(item.originalIndex)}
                   >
-                    Unlike (-1)
+                    Unlike
                   </Button>
                 </div>
               </div>

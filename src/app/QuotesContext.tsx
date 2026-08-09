@@ -4,73 +4,56 @@ import { createContext, useState, ReactNode } from 'react';
 import { quotes as initialQuotes } from '@/quotes';
 import { getRandomNumber } from '@/utils/helper-functions';
 
+const CURRENT_USER_ID = '123';
+
 export interface Quote {
   quote: string;
   author: string;
-  likedBy?: number;
-  isLiked?: boolean;
+  likedBy: string[];
 }
 
 export interface QuotesContextType {
   quotes: Quote[];
   quoteIndex: number;
   handleQuoteIndexUpdate: () => void;
-  handleLikeQuote: () => void;
-  handleUnlikeQuote: (indexToUnlike: number) => void;
+  handleToggleLike: (indexToToggle?: number) => void;
 }
 
 export const QuotesContext = createContext<QuotesContextType>({
   quotes: [],
   quoteIndex: 0,
   handleQuoteIndexUpdate: () => {},
-  handleLikeQuote: () => {},
-  handleUnlikeQuote: () => {},
+  handleToggleLike: () => {},
 });
 
 export function QuotesContextProvider({ children }: { children: ReactNode }) {
+
+  const formattedInitialQuotes: Quote[] = initialQuotes.map((q: any) => ({
+    ...q,
+    likedBy: Array.isArray(q.likedBy) ? q.likedBy : [],
+  }));
+
   const [quoteIndex, setQuoteIndex] = useState(0);
-  const [quotes, setQuotes] = useState<Quote[]>(initialQuotes);
+  const [quotes, setQuotes] = useState<Quote[]>(formattedInitialQuotes);
 
   function handleQuoteIndexUpdate() {
     const nextIndex = getRandomNumber(0, quotes.length - 1);
     setQuoteIndex(nextIndex);
   }
 
-  function handleLikeQuote() {
+  
+  function handleToggleLike(targetIndex?: number) {
+    const indexToUpdate = targetIndex ?? quoteIndex;
+
     const updatedQuotes = quotes.map((quote, id) => {
-      if (id === quoteIndex) {
-        const currentLikes =
-          typeof quote.likedBy === 'number' ? quote.likedBy : 0;
+      if (id === indexToUpdate) {
+        const hasLiked = quote.likedBy.includes(CURRENT_USER_ID);
 
-        if (quote.isLiked) {
-          return {
-            ...quote,
-            likedBy: currentLikes > 0 ? currentLikes - 1 : 0,
-            isLiked: false,
-          };
-        } else {
-          return {
-            ...quote,
-            likedBy: currentLikes + 1,
-            isLiked: true,
-          };
-        }
-      }
-      return quote;
-    });
-
-    setQuotes(updatedQuotes);
-  }
-
-  function handleUnlikeQuote(indexToUnlike: number) {
-    const updatedQuotes = quotes.map((quote, id) => {
-      if (id === indexToUnlike) {
-        const currentLikes =
-          typeof quote.likedBy === 'number' ? quote.likedBy : 0;
         return {
           ...quote,
-          likedBy: currentLikes > 0 ? currentLikes - 1 : 0,
-          isLiked: false,
+          likedBy: hasLiked
+            ? quote.likedBy.filter((userId) => userId !== CURRENT_USER_ID)
+            : [...quote.likedBy, CURRENT_USER_ID],
         };
       }
       return quote;
@@ -85,8 +68,7 @@ export function QuotesContextProvider({ children }: { children: ReactNode }) {
         quotes,
         quoteIndex,
         handleQuoteIndexUpdate,
-        handleLikeQuote,
-        handleUnlikeQuote,
+        handleToggleLike,
       }}
     >
       {children}

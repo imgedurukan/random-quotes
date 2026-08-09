@@ -1,39 +1,40 @@
 'use client';
 
-import { Button } from '@/components/Button';
 import { useContext } from 'react';
-import { H3 } from '@/components/typography/H3';
 import { QuotesContext } from '@/app/QuotesContext';
+import { QuoteCard } from '@/components/QuoteCard';
+import { Button } from '@/components/ui/button';
+
+const CURRENT_USER_ID = '123';
 
 export default function Home() {
-  const { quotes, quoteIndex, handleQuoteIndexUpdate, handleLikeQuote } =
+  const { quotes, quoteIndex, handleQuoteIndexUpdate, handleToggleLike } =
     useContext(QuotesContext);
 
-  const { quote, author, likedBy, isLiked } = quotes[quoteIndex];
+  const currentQuote = quotes[quoteIndex];
+
+  if (!currentQuote) return null;
 
   return (
-    <main className='min-h-screen flex items-center justify-center bg-slate-200 dark:bg-slate-950 transition-colors duration-300 px-4'>
-      <section className='bg-slate-50/80 dark:bg-slate-900 rounded-md p-6 sm:p-10 flex flex-col border border-slate-200 dark:border-slate-800 shadow-md transition-colors duration-300'>
-        <div className='self-end'>
-          <Button variant={'icon'} onClick={handleLikeQuote}>
-            {isLiked ? '❤️' : '🤍'}
-            <span className='font-bold text-slate-900 dark:text-slate-100 ml-1'>
-              {likedBy ?? 0}
-            </span>
-          </Button>
-        </div>
-        <H3 element='p' className='text-slate-900'>
-          {quote}
-        </H3>
-        <span className='text-md font-semibold text-slate-700 dark:text-slate-300 self-end mt-2'>
-          - {author}
-        </span>
-        <div className='mt-6 flex flex-col'>
-          <Button variant={'primary'} onClick={handleQuoteIndexUpdate}>
-            Next Quote
-          </Button>
-        </div>
-      </section>
+    <main className="min-h-[calc(100vh-65px)] flex items-center justify-center px-4 py-8">
+      <div className="max-w-lg w-full flex flex-col items-center gap-6">
+        <QuoteCard
+          quote={currentQuote.quote}
+          author={currentQuote.author}
+          likedBy={currentQuote.likedBy}
+          currentUserId={CURRENT_USER_ID}
+          onToggleLike={() => handleToggleLike()}
+        />
+
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={handleQuoteIndexUpdate}
+          className="w-full sm:w-auto px-8 font-medium border border-[var(--border-color)] bg-[var(--bg-card)] hover:bg-[var(--bg-primary)] text-[var(--text-primary)] transition-all duration-200 shadow-sm cursor-pointer"
+        >
+          Next Quote ✨
+        </Button>
+      </div>
     </main>
   );
 }

@@ -1,22 +1,12 @@
-export function H6({ element, children }) {
+export function H6({ element, children }: { element?: string; children: React.ReactNode }) {
+  const baseClasses = 'text-sm font-medium text-[var(--text-secondary)] text-right block tracking-wide';
+
   switch (element) {
     case 'span':
-      return (
-        <span className='text-md font-semibold text-slate-900 self-end'>
-          - {children}
-        </span>
-      );
+      return <span className={baseClasses}>- {children}</span>;
     case 'p':
-      return (
-        <p className='text-md font-semibold text-slate-900 self-end'>
-          - {children}
-        </p>
-      );
+      return <p className={baseClasses}>- {children}</p>;
     default:
-      return (
-        <h6 className='text-md font-semibold text-slate-900 self-end'>
-          - {children}
-        </h6>
-      );
+      return <h6 className={baseClasses}>- {children}</h6>;
   }
 }

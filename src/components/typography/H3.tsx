@@ -1,5 +1,5 @@
-export function H3({ element, children, className = '' }) {
-  const baseClasses = `text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-200 ${className}`;
+export function H3({ element, children, className = '' }: { element?: string; children: React.ReactNode; className?: string }) {
+  const baseClasses = `text-xl sm:text-2xl font-normal leading-relaxed text-[var(--text-primary)] ${className}`;
 
   switch (element) {
     case 'p':

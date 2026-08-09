@@ -2,7 +2,6 @@
 
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
-import { Button } from './Button';
 
 export function ThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -15,13 +14,16 @@ export function ThemeToggle() {
   if (!mounted) return null;
 
   const currentTheme = theme === 'system' ? resolvedTheme : theme;
+  const isDark = currentTheme === 'dark';
 
   return (
-    <Button
-      variant='secondary'
-      onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')}
+    <button
+      type="button"
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      className="p-2 rounded-full text-lg leading-none hover:bg-[var(--bg-primary)] transition-transform duration-300 hover:rotate-45 focus:outline-none"
+      aria-label="Toggle theme"
     >
-      {currentTheme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
-    </Button>
+      {isDark ? '☀️' : '🌙'}
+    </button>
   );
 }

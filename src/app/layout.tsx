@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from 'next/font/google';
 import { QuotesContextProvider } from '@/app/QuotesContext';
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { Navbar } from '@/components/Navbar';
+import Navbar from '@/components/Navbar';
 import './globals.css';
 
 const geistSans = Geist({
@@ -14,10 +14,9 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-
 export const metadata = {
   title: 'Random Quotes Application',
-  description: 'Random Quotes Application 130625',
+  description: 'Random Quotes Application',
 };
 
 export default function RootLayout({
@@ -35,7 +34,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className='min-h-full bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300'
       >
-        <ThemeProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <QuotesContextProvider>
             <Navbar />
             {children}

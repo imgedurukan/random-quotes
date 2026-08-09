@@ -2,19 +2,28 @@
 
 import { useContext } from 'react';
 import Link from 'next/link';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { QuotesContext } from '@/app/QuotesContext';
 import { QuoteCard } from '@/components/QuoteCard';
 import { H3 } from '@/components/typography/H3';
 import { Button } from '@/components/ui/button';
 
-const CURRENT_USER_ID = '123';
-
 export default function LikedQuotesPage() {
-  const { quotes, handleToggleLike } = useContext(QuotesContext);
+  const { user } = useUser();
+  const context = useContext(QuotesContext);
+
+  const quotes = context?.quotes || [];
+  const handleLikeQuote = context?.handleLikeQuote || (() => {});
+
+  const currentUserId = user?.sub;
 
   const likedQuotes = quotes
     .map((quote, originalIndex) => ({ ...quote, originalIndex }))
-    .filter((quote) => quote.likedBy.includes(CURRENT_USER_ID));
+    .filter((quote) =>
+      Array.isArray(quote.likedBy) && currentUserId
+        ? quote.likedBy.includes(currentUserId)
+        : false
+    );
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
@@ -43,9 +52,9 @@ export default function LikedQuotesPage() {
               key={item.originalIndex}
               quote={item.quote}
               author={item.author}
-              likedBy={item.likedBy}
-              currentUserId={CURRENT_USER_ID}
-              onToggleLike={() => handleToggleLike(item.originalIndex)}
+              likedBy={Array.isArray(item.likedBy) ? item.likedBy : []}
+              currentUserId={currentUserId}
+              onToggleLike={() => handleLikeQuote()}
               showUnlikeButton={true}
             />
           ))}

@@ -1,60 +1,67 @@
 'use client';
 
-import { createContext, useState, ReactNode } from 'react';
+import { createContext, useState } from 'react';
 import { quotes as initialQuotes } from '@/quotes';
 import { getRandomNumber } from '@/utils/helper-functions';
-
-const CURRENT_USER_ID = '123';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 export interface Quote {
+  id?: string;
   quote: string;
   author: string;
-  likedBy: string[];
+  likedBy?: string[];
 }
 
-export interface QuotesContextType {
+interface QuotesContextInterface {
   quotes: Quote[];
   quoteIndex: number;
   handleQuoteIndexUpdate: () => void;
-  handleToggleLike: (indexToToggle?: number) => void;
+  handleLikeQuote: () => void;
 }
 
-export const QuotesContext = createContext<QuotesContextType>({
+const InitialQuotesContext = {
   quotes: [],
   quoteIndex: 0,
-  handleQuoteIndexUpdate: () => {},
-  handleToggleLike: () => {},
-});
+  handleQuoteIndexUpdate: () => console.log(''),
+  handleLikeQuote: () => console.log(''),
+};
 
-export function QuotesContextProvider({ children }: { children: ReactNode }) {
+export const QuotesContext =
+  createContext<QuotesContextInterface>(InitialQuotesContext);
 
-  const formattedInitialQuotes: Quote[] = initialQuotes.map((q: any) => ({
-    ...q,
-    likedBy: Array.isArray(q.likedBy) ? q.likedBy : [],
-  }));
-
+export function QuotesContextProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useUser();
   const [quoteIndex, setQuoteIndex] = useState(0);
-  const [quotes, setQuotes] = useState<Quote[]>(formattedInitialQuotes);
+  const [quotes, setQuotes] = useState<Quote[]>(
+    initialQuotes.map((q) => ({
+      ...q,
+      likedBy: Array.isArray(q.likedBy) ? (q.likedBy as string[]) : [],
+    }))
+  );
 
   function handleQuoteIndexUpdate() {
     const nextIndex = getRandomNumber(0, quotes.length - 1);
     setQuoteIndex(nextIndex);
   }
 
-  
-  function handleToggleLike(targetIndex?: number) {
-    const indexToUpdate = targetIndex ?? quoteIndex;
+  function handleLikeQuote() {
+    if (!user) {
+      window.location.href = '/auth/login';
+      return;
+    }
+
+    const userId = user.sub as string;
 
     const updatedQuotes = quotes.map((quote, id) => {
-      if (id === indexToUpdate) {
-        const hasLiked = quote.likedBy.includes(CURRENT_USER_ID);
+      if (id === quoteIndex) {
+        const currentLikedBy = Array.isArray(quote.likedBy) ? quote.likedBy : [];
+        const isLiked = currentLikedBy.includes(userId);
 
-        return {
-          ...quote,
-          likedBy: hasLiked
-            ? quote.likedBy.filter((userId) => userId !== CURRENT_USER_ID)
-            : [...quote.likedBy, CURRENT_USER_ID],
-        };
+        const updatedLikedBy = isLiked
+          ? currentLikedBy.filter((sub) => sub !== userId)
+          : [...currentLikedBy, userId];
+
+        return { ...quote, likedBy: updatedLikedBy };
       }
       return quote;
     });
@@ -64,12 +71,7 @@ export function QuotesContextProvider({ children }: { children: ReactNode }) {
 
   return (
     <QuotesContext.Provider
-      value={{
-        quotes,
-        quoteIndex,
-        handleQuoteIndexUpdate,
-        handleToggleLike,
-      }}
+      value={{ quotes, quoteIndex, handleQuoteIndexUpdate, handleLikeQuote }}
     >
       {children}
     </QuotesContext.Provider>

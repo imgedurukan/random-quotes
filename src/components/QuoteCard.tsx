@@ -34,21 +34,27 @@ export function QuoteCard({
       <CardHeader className="flex flex-row justify-end p-4 pb-0 border-none">
         {showUnlikeButton ? (
           <Button
+            type="button"
             variant="destructive"
             size="sm"
             onClick={onToggleLike}
+            aria-label={`Remove quote by ${author}`}
             className="text-xs h-8 px-3 font-medium cursor-pointer"
           >
             Remove
           </Button>
         ) : (
           <Button
+            type="button"
             variant="ghost"
             size="sm"
             onClick={onToggleLike}
+            aria-label={isLiked ? 'Unlike quote' : 'Like quote'}
             className="flex items-center gap-1.5 hover:bg-[var(--bg-primary)] h-8 px-2 cursor-pointer"
           >
-            <span className="text-xl leading-none">{isLiked ? '❤️' : '🤍'}</span>
+            <span aria-hidden="true" className="text-xl leading-none">
+              {isLiked ? '❤️' : '🤍'}
+            </span>
             <span className="font-semibold text-[var(--text-primary)] text-sm">
               {likeCount}
             </span>

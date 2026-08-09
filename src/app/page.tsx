@@ -4,11 +4,11 @@ import { useContext } from 'react';
 import { QuotesContext } from '@/app/QuotesContext';
 import { QuoteCard } from '@/components/QuoteCard';
 import { Button } from '@/components/ui/button';
-
-const CURRENT_USER_ID = '123';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 export default function Home() {
-  const { quotes, quoteIndex, handleQuoteIndexUpdate, handleToggleLike } =
+  const { user } = useUser();
+  const { quotes, quoteIndex, handleQuoteIndexUpdate, handleLikeQuote } =
     useContext(QuotesContext);
 
   const currentQuote = quotes[quoteIndex];
@@ -21,9 +21,9 @@ export default function Home() {
         <QuoteCard
           quote={currentQuote.quote}
           author={currentQuote.author}
-          likedBy={currentQuote.likedBy}
-          currentUserId={CURRENT_USER_ID}
-          onToggleLike={() => handleToggleLike()}
+          likedBy={currentQuote.likedBy ?? []}
+          currentUserId={user?.sub ?? ''}
+          onToggleLike={() => handleLikeQuote()}
         />
 
         <Button

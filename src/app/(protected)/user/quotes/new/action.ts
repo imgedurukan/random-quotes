@@ -1,47 +1,12 @@
 'use server';
 
 import { auth0 } from '@/lib/auth0';
+import { AddNewQuoteState, newQuoteSchema } from '@/types/quotes';
 import z from 'zod';
-
-export type AddNewQuoteState = {
-  success: boolean;
-  errors?: {
-    formErrors: string[];
-    fieldErrors: {
-      author?: string[];
-      quote?: string[];
-      [key: string]: string[] | undefined;
-    };
-  };
-  message?: string;
-  data?: {
-    author: string;
-    quote: string;
-  };
-};
-
-const NewQuote = z.object({
-  author: z
-    .string()
-    .trim()
-    .min(2, { message: 'Author name should be at least 2 characters long' })
-    .max(50, {
-      message:
-        'Author name should be 50 characters long maximum. Please try a shorter name.',
-    }),
-  quote: z
-    .string()
-    .trim()
-    .min(5, { message: 'Quote should be at least 5 characters long' })
-    .max(300, {
-      message:
-        'Quote should be 300 characters long maximum. Please try a shorter one.',
-    }),
-});
 
 export async function addNewQuote(
   _currentState: AddNewQuoteState,
-  formData: FormData
+  formData: FormData,
 ): Promise<AddNewQuoteState> {
   const session = await auth0.getSession();
 
@@ -53,14 +18,15 @@ export async function addNewQuote(
   }
 
   const rawData = {
-    author: String(formData.get('author') ?? ''),
-    quote: String(formData.get('quote') ?? ''),
+    author: (formData.get('author') as string) || '',
+    quote: (formData.get('quote') as string) || '',
+    source: (formData.get('source') as string) || '',
   };
 
-  const validationOutput = NewQuote.safeParse(rawData);
+  const validationOutput = newQuoteSchema.safeParse(rawData);
 
   if (!validationOutput.success) {
-    const validationErrors = validationOutput.error.flatten();
+    const validationErrors = z.flattenError(validationOutput.error);
 
     return {
       success: false,

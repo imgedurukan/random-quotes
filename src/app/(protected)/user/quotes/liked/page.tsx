@@ -20,8 +20,8 @@ export default function LikedQuotesPage() {
   const likedQuotes = quotes
     .map((quote, originalIndex) => ({ ...quote, originalIndex }))
     .filter((quote) =>
-      Array.isArray(quote.likedBy) && currentUserId
-        ? quote.likedBy.includes(currentUserId)
+      Array.isArray(quote.likedByUsers) && currentUserId
+        ? quote.likedByUsers.includes(currentUserId)
         : false
     );
 
@@ -52,9 +52,9 @@ export default function LikedQuotesPage() {
               key={item.originalIndex}
               quote={item.quote}
               author={item.author}
-              likedBy={Array.isArray(item.likedBy) ? item.likedBy : []}
+              likedBy={typeof item.likedBy === 'number' ? item.likedBy : 0}
               currentUserId={currentUserId}
-              onToggleLike={() => handleLikeQuote()}
+              onToggleLike={() => handleLikeQuote(item.originalIndex)}
               showUnlikeButton={true}
             />
           ))}

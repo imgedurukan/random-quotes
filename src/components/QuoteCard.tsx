@@ -12,8 +12,8 @@ import {
 interface QuoteCardProps {
   quote: string;
   author: string;
-  likedBy: string[];
-  currentUserId: string;
+  likedBy: number;
+  currentUserId?: string;
   onToggleLike: () => void;
   showUnlikeButton?: boolean;
 }
@@ -22,13 +22,9 @@ export function QuoteCard({
   quote,
   author,
   likedBy,
-  currentUserId,
   onToggleLike,
   showUnlikeButton = false,
 }: QuoteCardProps) {
-  const isLiked = likedBy.includes(currentUserId);
-  const likeCount = likedBy.length;
-
   return (
     <Card className="w-full bg-[var(--bg-card)] border border-[var(--border-color)] shadow-sm rounded-2xl transition-all duration-300 flex flex-col justify-between min-h-[220px] p-2">
       <CardHeader className="flex flex-row justify-end p-4 pb-0 border-none">
@@ -49,14 +45,14 @@ export function QuoteCard({
             variant="ghost"
             size="sm"
             onClick={onToggleLike}
-            aria-label={isLiked ? 'Unlike quote' : 'Like quote'}
+            aria-label="Like quote"
             className="flex items-center gap-1.5 hover:bg-[var(--bg-primary)] h-8 px-2 cursor-pointer"
           >
             <span aria-hidden="true" className="text-xl leading-none">
-              {isLiked ? '❤️' : '🤍'}
+              ❤️
             </span>
             <span className="font-semibold text-[var(--text-primary)] text-sm">
-              {likeCount}
+              {likedBy}
             </span>
           </Button>
         )}

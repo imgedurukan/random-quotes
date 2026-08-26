@@ -4,33 +4,18 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export function TopNav() {
   const { user } = useUser();
   const pathname = usePathname();
 
-  const appRoutes = [
-    {
-      name: 'Home',
-      url: '/',
-      protectedPage: false,
-    },
-    {
-      name: 'Liked Quotes',
-      url: '/user/quotes/liked',
-      protectedPage: true,
-    },
-    {
-      name: 'Add Quote',
-      url: '/user/quotes/new',
-      protectedPage: true,
-    },
-    {
-      name: user ? 'Logout' : 'Login',
-      url: user ? '/auth/logout' : '/auth/login',
-      protectedPage: false,
-    },
-  ];
+  const isQuotesActive = pathname.startsWith('/user/quotes');
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[var(--border-color)] bg-[var(--bg-card)]/80 backdrop-blur-md transition-colors duration-300">
@@ -44,25 +29,54 @@ export function TopNav() {
 
         <div className="flex items-center gap-6">
           <nav className="flex items-center gap-5">
-            {appRoutes.map(({ name, url, protectedPage }) => {
-              if (protectedPage && !user) return null;
+            <Link
+              href="/"
+              className={`relative text-sm font-normal transition-colors duration-200 py-1 ${
+                pathname === '/'
+                  ? 'text-[var(--text-primary)] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[var(--text-primary)]'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+              }`}
+            >
+              Home
+            </Link>
 
-              const isActive = pathname === url;
-
-              return (
-                <Link
-                  key={name}
-                  href={url}
-                  className={`relative text-sm font-normal transition-colors duration-200 py-1 ${
-                    isActive
+            {user && (
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  className={`relative text-sm font-normal transition-colors duration-200 py-1 outline-none flex items-center gap-1 cursor-pointer ${
+                    isQuotesActive
                       ? 'text-[var(--text-primary)] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[var(--text-primary)]'
                       : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
-                  {name}
-                </Link>
-              );
-            })}
+                  Quotes <span className="text-xs">▾</span>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-44 bg-[var(--bg-card)] border-[var(--border-color)]">
+                  <DropdownMenuItem>
+                    <Link href="/user/quotes/liked" className="cursor-pointer w-full block">
+                      ❤️ Liked Quotes
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link href="/user/quotes/mine" className="cursor-pointer w-full block">
+                      📝 My Quotes
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link href="/user/quotes/new" className="cursor-pointer w-full block">
+                      ➕ Add Quote
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+
+            <Link
+              href={user ? '/auth/logout' : '/auth/login'}
+              className="text-sm font-normal text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors duration-200 py-1"
+            >
+              {user ? 'Logout' : 'Login'}
+            </Link>
           </nav>
 
           <ThemeToggle />

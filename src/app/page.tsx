@@ -8,12 +8,40 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 
 export default function Home() {
   const { user } = useUser();
-  const { quotes, quoteIndex, handleQuoteIndexUpdate, handleLikeQuote } =
-    useContext(QuotesContext);
+  const {
+    quotes,
+    quoteIndex,
+    isLoading,
+    error,
+    handleQuoteIndexUpdate,
+    handleLikeQuote,
+  } = useContext(QuotesContext);
+
+  if (isLoading) {
+    return (
+      <main className="min-h-[calc(100vh-65px)] flex items-center justify-center">
+        <p className="text-lg">Loading quotes…</p>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="min-h-[calc(100vh-65px)] flex items-center justify-center">
+        <p className="text-red-500 font-medium">{error}</p>
+      </main>
+    );
+  }
 
   const currentQuote = quotes[quoteIndex];
 
-  if (!currentQuote) return null;
+  if (!currentQuote) {
+    return (
+      <main className="min-h-[calc(100vh-65px)] flex items-center justify-center">
+        <p>No quotes found in database.</p>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-[calc(100vh-65px)] flex items-center justify-center px-4 py-8">
@@ -21,7 +49,7 @@ export default function Home() {
         <QuoteCard
           quote={currentQuote.quote}
           author={currentQuote.author}
-          likedBy={currentQuote.likedBy ?? []}
+          likedBy={currentQuote.likedBy ?? 0}
           currentUserId={user?.sub ?? ''}
           onToggleLike={() => handleLikeQuote()}
         />

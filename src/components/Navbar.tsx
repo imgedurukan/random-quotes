@@ -16,8 +16,13 @@ export function TopNav() {
       protectedPage: false,
     },
     {
-      name: 'My Liked Quotes',
+      name: 'Liked Quotes',
       url: '/user/quotes/liked',
+      protectedPage: true,
+    },
+    {
+      name: 'Add Quote',
+      url: '/user/quotes/new',
       protectedPage: true,
     },
     {
